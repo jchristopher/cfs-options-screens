@@ -16,7 +16,7 @@ Build any number of options screens based on [http://wordpress.org/plugins/custo
 
 = For Example =
 
-Many times you may use something like the following to build your main site navigation:
+Begin by creating Field Group(s) you want to include on your options screen. **Be sure to set NO Placement Rules.** Once it's created, note the post ID it uses. You can then register any number of options screens like so:
 
 `function my_cfs_options_screens( $screens ) {
 	$screens[] = array(
@@ -35,8 +35,25 @@ Retrieve your options like so:
 
 `$value = cfs_get_option( 'options_screen_name', 'field_name_from_field_group' );`
 
-== Installation ==
+You can set up multiple top level and/or children options pages by adding a `parent` argument when registering your screen:
 
+`function my_cfs_options_screens( $screens ) {
+ 	// Parent
+ 	$screens[] = array(
+ 		'name' => 'options',
+ 		'field_groups' => array( 15 ),
+ 	);
+ 	// Child
+ 	$screens[] = array(
+ 		'name' => 'options-nav',
+ 		'parent' => 'options',	// name of the parent
+ 		'field_groups' => array( 17 ),
+ 	);
+ 	return $screens;
+ }
+ add_filter( 'cfs_options_screens', 'my_cfs_options_screens' );`
+
+== Installation ==
 
 1. Upload `cfs-options-screens` to the `/wp-content/plugins/` directory
 1. Activate the plugin through the 'Plugins' menu in WordPress

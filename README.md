@@ -6,6 +6,8 @@ Create any number of options screens with [Custom Field Suite](http://customfiel
 
 ## Documentation
 
+Begin by creating your Field Group(s) as you normally would. Be sure to set **NO Placement Rules**, this is handled automagically.
+
 Register an Options Screen (with all options)
 
 ```php

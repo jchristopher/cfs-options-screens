@@ -49,6 +49,12 @@ class CFS_Options_Screens {
 	 */
 	function init() {
 
+		// hide the 'Edit Post' title, 'Add New' button, and 'updated' notification when editing all options screens
+		add_action( 'admin_enqueue_scripts', array( $this, 'assets' ) );
+
+		// reinstate the 'updated' notification
+		add_action( 'admin_notices', array( $this, 'maybe_updated_notice' ) );
+
 		// let developers customize the post type used
 		$this->post_type = apply_filters( 'cfs_options_screens_post_type', $this->post_type );
 
@@ -63,6 +69,24 @@ class CFS_Options_Screens {
 
 		// add menus
 		add_action( 'admin_menu', array( $this, 'maybe_add_menus' ) );
+	}
+
+	function assets( $hook ) {
+		global $post;
+
+		if( 'post.php' == $hook && $this->post_type == $post->post_type ) {
+			wp_enqueue_style( 'cfs-options-screen', plugin_dir_url( __FILE__ ) . 'style.css' );
+		}
+
+		return;
+	}
+
+	function maybe_updated_notice() {
+		if ( isset( $_GET['message'] ) ) {
+			?>
+				<div class="updated"><p><?php _e( 'Saved', '' ); ?></p></div>
+			<?php
+		}
 	}
 
 	/**

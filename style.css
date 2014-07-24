@@ -1,0 +1,16 @@
+#wpbody-content .wrap h2,
+#wpbody-content #message,
+#wpbody-content #minor-publishing,
+#wpbody-content #submitdiv .handlediv,
+#wpbody-content #submitdiv .hndle,
+#wpbody-content #delete-action {
+	display:none;
+}
+
+#wpbody-content #major-publishing-actions {
+	border-top:0;
+}
+
+#wpbody-content .wrap {
+	padding-top:30px;
+}

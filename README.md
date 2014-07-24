@@ -2,7 +2,7 @@ This is a WordPress plugin, [Official download available on WordPress.org](http:
 
 # Custom Field Suite Options Screens
 
-Create any number of options screens with [Custom Field Suite](http://customfieldsuite.com)
+Create any number of options screens powered by [Custom Field Suite](http://customfieldsuite.com)
 
 ## Documentation
 

@@ -31,6 +31,10 @@ Many times you may use something like the following to build your main site navi
 }
 add_filter( 'cfs_options_screens', 'my_cfs_options_screens' );`
 
+Retrieve your options like so:
+
+`$value = cfs_get_option( 'options_screen_name', 'field_name_from_field_group' );`
+
 == Installation ==
 
 
@@ -43,6 +47,10 @@ add_filter( 'cfs_options_screens', 'my_cfs_options_screens' );`
 = How do I add a Field Group to my options screen? =
 
 You must specify the Field Group ID(s) in the `field_groups` parameter when using the `cfs_options_screens` hook
+
+= How do I retrieve saved options? =
+
+`$value = cfs_get_option( 'options_screen_name', 'field_name_from_field_group' );`
 
 == Changelog ==
 

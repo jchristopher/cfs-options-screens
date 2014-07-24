@@ -44,3 +44,11 @@ add_filter( 'cfs_options_screens', 'my_cfs_options_screens' );
 ```
 
 Once your options screen(s) have been registered you can attach CFS Field Groups to them. Done!
+
+## Retrieve options
+
+Option retrieval requires the screen and field names, it's as easy as:
+
+```php
+$value = cfs_get_option( 'options_screen_name', 'field_name_from_field_group' );
+```

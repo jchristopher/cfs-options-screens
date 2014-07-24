@@ -3,7 +3,9 @@
 #wpbody-content #minor-publishing,
 #wpbody-content #submitdiv .handlediv,
 #wpbody-content #submitdiv .hndle,
-#wpbody-content #delete-action {
+#wpbody-content #delete-action,
+#wpbody-contetn #screen-meta,
+#wpbody-contetn #screen-meta-links {
 	display:none;
 }
 
@@ -12,5 +14,5 @@
 }
 
 #wpbody-content .wrap {
-	padding-top:30px;
+	padding-top:10px;
 }

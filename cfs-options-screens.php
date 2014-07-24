@@ -71,6 +71,10 @@ class CFS_Options_Screens {
 		add_action( 'admin_menu', array( $this, 'maybe_add_menus' ) );
 	}
 
+	/**
+	 * Maybe enqueue our stylesheet
+	 * @param $hook
+	 */
 	function assets( $hook ) {
 		global $post;
 
@@ -81,6 +85,9 @@ class CFS_Options_Screens {
 		return;
 	}
 
+	/**
+	 * Since the 'updated' message references saving a post and adding a new one we hid it and this adds our own
+	 */
 	function maybe_updated_notice() {
 		if ( isset( $_GET['message'] ) ) {
 			?>

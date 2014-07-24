@@ -12,7 +12,7 @@ Create options screens that utilize Custom Field Suite
 
 == Description ==
 
-Build any number of options screens based on [http://wordpress.org/plugins/custom-field-suite/](Custom Field Suite).
+Build any number of options screens based on [Custom Field Suite](http://wordpress.org/plugins/custom-field-suite/).
 
 = For Example =
 

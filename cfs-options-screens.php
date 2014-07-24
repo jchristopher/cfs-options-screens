@@ -30,6 +30,11 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 class CFS_Options_Screens {
 
 	/**
+	 * @var CFS_Options_Screens Singleton
+	 */
+	private static $instance;
+
+	/**
 	 * @var array Options screens to create and utilize
 	 */
 	public $screens = array();
@@ -43,6 +48,23 @@ class CFS_Options_Screens {
 	 * @var string Meta key used to store options screen name
 	 */
 	public $meta_key = '_cfs_options_screen_name';
+
+	function __construct() {
+		add_action( 'init', array( $this, 'init' ) );
+		add_action( 'cfs_matching_groups', array( $this, 'cfs_rule_override' ), 10, 3 );
+	}
+
+	/**
+	 * Singleton
+	 *
+	 * @return CFS_Options_Screens
+	 */
+	public static function instance() {
+		if ( ! isset( self::$instance ) && ! ( self::$instance instanceof CFS_Options_Screens ) ) {
+			self::$instance = new CFS_Options_Screens;
+		}
+		return self::$instance;
+	}
 
 	/**
 	 * Initialize everything
@@ -237,9 +259,11 @@ if ( ! function_exists( 'cfs_get_option' ) ) {
 			return false;
 		}
 
-		if ( ! empty( $this->screens ) ) {
-			foreach( $this->screens as $screen_key => $screen_meta ) {
-				if ( $field == $screen_meta['name'] ) {
+		$cfs_options_screens = CFS_Options_Screens::instance();
+
+		if ( ! empty( $cfs_options_screens->screens ) ) {
+			foreach( $cfs_options_screens->screens as $screen_meta ) {
+				if ( $screen == $screen_meta['name'] ) {
 					$value = CFS()->get( $field, $screen_meta['id'] );
 				}
 			}
@@ -249,7 +273,17 @@ if ( ! function_exists( 'cfs_get_option' ) ) {
 	}
 }
 
-// instantiate
-$cfs_options_screens = new CFS_Options_Screens();
-add_action( 'init', array( $cfs_options_screens, 'init' ) );
-add_action( 'cfs_matching_groups', array( $cfs_options_screens, 'cfs_rule_override' ), 10, 3 );
+/**
+ * Initializer
+ *
+ * @return CFS_Options_Screens
+ */
+if ( ! function_exists( 'cfs_options_screens_init' ) ) {
+	function cfs_options_screens_init() {
+		$cfs_options_screens = CFS_Options_Screens::instance();
+		return $cfs_options_screens;
+	}
+}
+
+// kickoff
+cfs_options_screens_init();

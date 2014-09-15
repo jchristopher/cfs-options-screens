@@ -1,11 +1,24 @@
-#wpbody-content .wrap h2,
+#wpbody-content .wrap h2 {
+	position:relative;
+	visibility:hidden;
+}
+
+#wpbody-content .wrap h2:after {
+	display:block;
+	position:absolute;
+	left:0;
+	top:0.4em;
+	visibility:visible;
+}
+
 #wpbody-content #message,
 #wpbody-content #minor-publishing,
 #wpbody-content #submitdiv .handlediv,
 #wpbody-content #submitdiv .hndle,
 #wpbody-content #delete-action,
-#wpbody-contetn #screen-meta,
-#wpbody-contetn #screen-meta-links {
+#wpbody-content #screen-meta,
+#wpbody-content #screen-meta-links,
+#wpbody-content #post-body-content {
 	display:none;
 }
 

@@ -3,7 +3,7 @@
 Plugin Name: CFS Options Screens
 Plugin URI: http://wordpress.org/plugins/cfs-options-screens/
 Description: Register options screens powered by Custom Field Suite
-Version: 1.0
+Version: 1.0.1
 Author: Jonathan Christopher
 Author URI: http://mondaybynoon.com/
 Text Domain: cfsos
@@ -49,9 +49,15 @@ class CFS_Options_Screens {
 	 */
 	public $meta_key = '_cfs_options_screen_name';
 
+	/**
+	 * @var bool Whether we are applicable on this page load
+	 */
+	private $applicable = false;
+
 	function __construct() {
 		add_action( 'init', array( $this, 'init' ) );
 		add_action( 'cfs_matching_groups', array( $this, 'cfs_rule_override' ), 10, 3 );
+		add_action( 'admin_print_scripts', array( $this, 'admin_inline_css' ) );
 	}
 
 	/**
@@ -102,9 +108,36 @@ class CFS_Options_Screens {
 
 		if( 'post.php' == $hook && $this->post_type == $post->post_type ) {
 			wp_enqueue_style( 'cfs-options-screen', plugin_dir_url( __FILE__ ) . 'style.css' );
+			$this->applicable = true;
 		}
 
 		return;
+	}
+
+	/**
+	 * Output CSS in the footer that will customize the page title
+	 */
+	function admin_inline_css() {
+		global $post;
+
+		$heading = __( 'Options' );
+
+		// determine which screen we're on
+		if ( isset( $this->screens ) ) {
+			foreach ( $this->screens as $screen ) {
+				if ( $post->ID == $screen['id'] ) {
+					$heading = $screen['page_title'];
+				}
+			}
+		}
+
+		if ( $this->applicable ) { ?>
+			<style type="text/css">
+				#wpbody-content .wrap h2:after {
+					content: '<?php echo esc_html( $heading ); ?>';
+				}
+			</style>
+		<?php }
 	}
 
 	/**

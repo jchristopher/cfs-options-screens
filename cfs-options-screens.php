@@ -123,7 +123,7 @@ class CFS_Options_Screens {
 		$heading = __( 'Options' );
 
 		// determine which screen we're on
-		if ( isset( $this->screens ) ) {
+		if ( isset( $this->screens ) && is_object( $post ) ) {
 			foreach ( $this->screens as $screen ) {
 				if ( $post->ID == $screen['id'] ) {
 					$heading = $screen['page_title'];

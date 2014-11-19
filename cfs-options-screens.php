@@ -214,6 +214,10 @@ class CFS_Options_Screens {
 							$parent_slug = 'post.php?post=' . absint( $maybe_parent_screen['id'] ) . '&action=edit';
 							add_submenu_page( $parent_slug, $screen['page_title'], $screen['menu_title'], $screen['capability'], $edit_link, '' );
 							break;
+						} else if (post_type_exists($parent)) {
+							$post_parent_slug = 'edit.php?post_type=' . $parent;
+							add_submenu_page( $post_parent_slug, $screen['page_title'], $screen['menu_title'], $screen['capability'], $edit_link, '' );
+							break;
 						}
 					}
 				}

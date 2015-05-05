@@ -3,7 +3,7 @@
 Plugin Name: CFS Options Screens
 Plugin URI: http://wordpress.org/plugins/cfs-options-screens/
 Description: Register options screens powered by Custom Field Suite
-Version: 1.0.1
+Version: 1.0.2
 Author: Jonathan Christopher
 Author URI: http://mondaybynoon.com/
 Text Domain: cfsos
@@ -25,7 +25,9 @@ along with this program; if not, see <http://www.gnu.org/licenses/>.
 */
 
 // exit if accessed directly
-if ( ! defined( 'ABSPATH' ) ) exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 class CFS_Options_Screens {
 
@@ -144,7 +146,9 @@ class CFS_Options_Screens {
 	 * Since the 'updated' message references saving a post and adding a new one we hid it and this adds our own
 	 */
 	function maybe_updated_notice() {
-		if ( isset( $_GET['message'] ) ) {
+		global $post;
+
+		if ( isset( $_GET['message'] ) && $this->post_type == $post->post_type ) {
 			?>
 				<div class="updated"><p><?php _e( 'Saved', '' ); ?></p></div>
 			<?php

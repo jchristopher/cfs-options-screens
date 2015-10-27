@@ -3,12 +3,12 @@
 Plugin Name: CFS Options Screens
 Plugin URI: http://wordpress.org/plugins/cfs-options-screens/
 Description: Register options screens powered by Custom Field Suite
-Version: 1.0.2
+Version: 1.0.3
 Author: Jonathan Christopher
 Author URI: http://mondaybynoon.com/
 Text Domain: cfsos
 
-Copyright 2014 Jonathan Christopher
+Copyright 2014-2015 Jonathan Christopher
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -108,7 +108,7 @@ class CFS_Options_Screens {
 	function assets( $hook ) {
 		global $post;
 
-		if( 'post.php' == $hook && $this->post_type == $post->post_type ) {
+		if ( 'post.php' == $hook && $this->post_type == $post->post_type ) {
 			wp_enqueue_style( 'cfs-options-screen', plugin_dir_url( __FILE__ ) . 'style.css' );
 			$this->applicable = true;
 		}
@@ -135,6 +135,7 @@ class CFS_Options_Screens {
 
 		if ( $this->applicable ) { ?>
 			<style type="text/css">
+				#wpbody-content .wrap h1:after,
 				#wpbody-content .wrap h2:after {
 					content: '<?php echo esc_html( $heading ); ?>';
 				}
@@ -150,7 +151,7 @@ class CFS_Options_Screens {
 
 		if ( isset( $_GET['message'] ) && $this->post_type == $post->post_type ) {
 			?>
-				<div class="updated"><p><?php _e( 'Saved', '' ); ?></p></div>
+				<div class="updated"><p><?php esc_html_e( 'Saved', 'cfsos' ); ?></p></div>
 			<?php
 		}
 	}
@@ -160,7 +161,7 @@ class CFS_Options_Screens {
 	 */
 	function init_screens() {
 		if ( ! empty( $this->screens ) ) {
-			foreach( $this->screens as $screen_key => $screen_meta ) {
+			foreach ( $this->screens as $screen_key => $screen_meta ) {
 				$this->screens[ $screen_key ]['name']           = isset( $screen_meta['name'] )          ? $screen_meta['name'] : 'options';
 				$this->screens[ $screen_key ]['page_title']     = isset( $screen_meta['page_title'] )    ? $screen_meta['page_title'] : ucfirst( (string) $this->screens[ $screen_key ]['name'] );
 				$this->screens[ $screen_key ]['menu_title']     = isset( $screen_meta['menu_title'] )    ? $screen_meta['menu_title'] : ucfirst( (string) $this->screens[ $screen_key ]['name'] );
@@ -178,8 +179,9 @@ class CFS_Options_Screens {
 					$this->screens[ $screen_key ]['id'] = wp_insert_post(
 						array(
 							'post_title' => sanitize_text_field( $this->screens[ $screen_key ]['name'] ),
-							'post_type'  => sanitize_text_field( $this->post_type ) )
-						);
+							'post_type'  => sanitize_text_field( $this->post_type )
+						)
+					);
 				} else {
 					$this->screens[ $screen_key ]['id'] = absint( $screen->ID );
 				}
@@ -208,7 +210,7 @@ class CFS_Options_Screens {
 	function maybe_add_menus() {
 		// screens were registered during init so the ID is already prepped and the post exists
 		if ( ! empty( $this->screens ) ) {
-			foreach( $this->screens as $screen ) {
+			foreach ( $this->screens as $screen ) {
 				$edit_link = 'post.php?post=' . absint( $screen['id'] ) . '&action=edit';
 
 				// if this screen doesn't have a parent, it IS a parent
@@ -217,7 +219,7 @@ class CFS_Options_Screens {
 				} else {
 					// it's a sub-menu, so add it to the parent
 					$parent = (string) $screen['parent'];
-					foreach( $this->screens as $maybe_parent_screen ) {
+					foreach ( $this->screens as $maybe_parent_screen ) {
 						if ( $parent == $maybe_parent_screen['name'] ) {
 							$parent_slug = 'post.php?post=' . absint( $maybe_parent_screen['id'] ) . '&action=edit';
 							add_submenu_page( $parent_slug, $screen['page_title'], $screen['menu_title'], $screen['capability'], $edit_link, '' );
@@ -241,7 +243,7 @@ class CFS_Options_Screens {
 	 */
 	function cfs_rule_override( $matches, $params, $rule_types ) {
 
-		if ( is_array( $params ) || ! is_numeric ( $params ) ) {
+		if ( is_array( $params ) || ! is_numeric( $params ) ) {
 			return $matches;
 		}
 
@@ -250,7 +252,7 @@ class CFS_Options_Screens {
 
 		// we need to validate that this post ID is actually a registered options screen
 		if ( ! empty( $this->screens ) ) {
-			foreach( $this->screens as $screen_key => $screen_meta ) {
+			foreach ( $this->screens as $screen_key => $screen_meta ) {
 				if ( isset( $screen_meta['id'] ) && $post_id == $screen_meta['id'] ) {
 					$options_screen = $screen_meta;
 					break;
@@ -258,9 +260,9 @@ class CFS_Options_Screens {
 			}
 		}
 
-		if( $options_screen && is_array( $matches ) && ! empty( $matches ) ) {
+		if ( $options_screen && is_array( $matches ) && ! empty( $matches ) ) {
 			// we need to strip out the Field Groups that are not registered with this options screen
-			foreach( $matches as $match_key => $match_title ) {
+			foreach ( $matches as $match_key => $match_title ) {
 				if ( ! in_array( $match_key, $options_screen['field_groups'] ) ) {
 					unset( $matches[ $match_key ] );
 				}
@@ -268,10 +270,10 @@ class CFS_Options_Screens {
 		} else {
 			// we need to strip out all Field Groups related to Options Screens else they'll show up where we don't want them
 			$options_screens_field_groups = array();
-			foreach( $this->screens as $screen_meta ) {
+			foreach ( $this->screens as $screen_meta ) {
 				$options_screens_field_groups = array_merge( $options_screens_field_groups, $screen_meta['field_groups'] );
 			}
-			foreach( $matches as $match_key => $match_title ) {
+			foreach ( $matches as $match_key => $match_title ) {
 				if ( in_array( $match_key, $options_screens_field_groups ) ) {
 					unset( $matches[ $match_key ] );
 				}
@@ -303,7 +305,7 @@ if ( ! function_exists( 'cfs_get_option' ) ) {
 		$cfs_options_screens = CFS_Options_Screens::instance();
 
 		if ( ! empty( $cfs_options_screens->screens ) ) {
-			foreach( $cfs_options_screens->screens as $screen_meta ) {
+			foreach ( $cfs_options_screens->screens as $screen_meta ) {
 				if ( $screen == $screen_meta['name'] ) {
 					$value = CFS()->get( $field, $screen_meta['id'] );
 				}

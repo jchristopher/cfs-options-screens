@@ -4,7 +4,7 @@ Donate link: http://mondaybynoon.com/donate/
 Tags: CFS, Custom Field Suite, Options, Settings, Screen
 Requires at least: 3.9
 Tested up to: 4.3
-Stable tag: 1.0.3
+Stable tag: 1.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -70,6 +70,9 @@ You must specify the Field Group ID(s) in the `field_groups` parameter when usin
 `$value = cfs_get_option( 'options_screen_name', 'field_name_from_field_group' );`
 
 == Changelog ==
+
+= 1.1 =
+* Added new `cfs_get_options()` function to retrieve all CFS data for an options screen
 
 = 1.0.3 =
 * Fixed an issue in WordPress 4.3 where customized edit screen titles were not shown

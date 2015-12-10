@@ -4,7 +4,7 @@ Donate link: http://mondaybynoon.com/donate/
 Tags: CFS, Custom Field Suite, Options, Settings, Screen
 Requires at least: 3.9
 Tested up to: 4.4
-Stable tag: 1.1.1
+Stable tag: 1.1.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -70,6 +70,9 @@ You must specify the Field Group ID(s) in the `field_groups` parameter when usin
 `$value = cfs_get_option( 'options_screen_name', 'field_name_from_field_group' );`
 
 == Changelog ==
+
+= 1.1.2 =
+* Refined the arguments for the underlying CPT to hide it from the Admin menu, filterable with `cfs_options_screens_post_type_args`
 
 = 1.1.1 =
 * Fixed an issue resulting in a change in WordPress 4.4 that prevented editing options screens

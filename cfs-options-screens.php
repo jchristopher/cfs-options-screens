@@ -3,7 +3,7 @@
 Plugin Name: CFS Options Screens
 Plugin URI: http://wordpress.org/plugins/cfs-options-screens/
 Description: Register options screens powered by Custom Field Suite
-Version: 1.1.2
+Version: 1.2
 Author: Jonathan Christopher
 Author URI: http://mondaybynoon.com/
 Text Domain: cfsos
@@ -237,6 +237,111 @@ class CFS_Options_Screens {
 		}
 	}
 
+	/**
+	 * By default CFS Options Screens only supports Field Groups with no placement rules
+	 * 'Overrides' are for the cases where you want to use a Field Group to facilitate setting
+	 * defaults on an Options Screen, but also allow for an override for that field data
+	 * on specific edit screens that follow the placement rules of CFS itself
+	 *
+	 * @param $matches
+	 * @param $params
+	 * @param $rule_types
+	 */
+	function maybe_has_overrides( $matches, $params, $rule_types, $options_screen ) {
+		// didn't find an options screen?
+		if ( empty( $options_screen ) ) {
+			return $matches;
+		}
+
+		// segment defaults
+		if ( ! empty( $options_screen['field_groups'] ) ) {
+
+			// move over all of these Field Groups into $matches
+			foreach ( $options_screen['field_groups'] as $field_group ) {
+				$key = $this->get_field_group_id( $field_group );
+
+				if ( ! array_key_exists( $key, $matches ) ) {
+					$matches[ $key ] = get_the_title( $key );
+				}
+			}
+		}
+
+		return $matches;
+	}
+
+	/**
+	 * Version 1.2 introduced overrides, so we need back compat
+	 *
+	 * @since 1.2
+	 *
+	 * @param $field_group
+	 *
+	 * @return int
+	 */
+	function get_field_group_id( $field_group ) {
+
+		if ( is_array( $field_group ) && array_key_exists( 'id', $field_group ) ) {
+			$field_group = absint( $field_group['id'] );
+		}
+
+		return absint( $field_group );
+	}
+
+	/**
+	 * Retrieve the CFS Options Screen model from its post ID
+	 *
+	 * @param $post_id
+	 *
+	 * @return bool|array
+	 */
+	function get_options_screen_from_post_id( $post_id ) {
+		$options_screen = false;
+
+		// we need to validate that this post ID is actually a registered options screen
+		if ( ! empty( $this->screens ) ) {
+			foreach ( $this->screens as $screen_key => $screen_meta ) {
+				if ( isset( $screen_meta['id'] ) && $post_id == $screen_meta['id'] ) {
+					$options_screen = $screen_meta;
+					break;
+				}
+			}
+		}
+
+		return $options_screen;
+	}
+
+	/**
+	 * Retrieve an array of Field Group IDs from a field_groups definition, takes into consideration
+	 * whether you want to include overrides or not
+	 *
+	 * @since 1.2
+	 * @param $field_groups
+	 * @param bool $include_overrides
+	 *
+	 * @return array
+	 */
+	function get_field_group_ids( $field_groups, $include_overrides = true ) {
+
+		$field_group_ids = array();
+
+		foreach ( $field_groups as $field_group ) {
+
+			if (
+				( $include_overrides || is_numeric( $field_group ) ) // include by intention or by legacy field_groups value (pre 1.2)
+				|| (
+					! $include_overrides // don't include overrides
+					&& is_array( $field_group ) // 1.2 or later
+					&& array_key_exists( 'has_overrides', $field_group )
+					&& empty( $field_group['has_overrides'] ) // does not have overrides
+				) ) {
+				// include it in the list
+				$field_group_ids[] = $this->get_field_group_id( $field_group );
+			}
+		}
+
+		return $field_group_ids;
+	}
+
 
 	/**
 	 * Custom Field Suite doesn't support single post IDs for placement rules, so we're going to inject our own.
@@ -253,32 +358,38 @@ class CFS_Options_Screens {
 			return $matches;
 		}
 
-		$options_screen = false;
 		$post_id = absint( $params );
+		$options_screen = $this->get_options_screen_from_post_id( $post_id );
 
-		// we need to validate that this post ID is actually a registered options screen
-		if ( ! empty( $this->screens ) ) {
-			foreach ( $this->screens as $screen_key => $screen_meta ) {
-				if ( isset( $screen_meta['id'] ) && $post_id == $screen_meta['id'] ) {
-					$options_screen = $screen_meta;
-					break;
-				}
-			}
-		}
+		$matches = $this->maybe_has_overrides( $matches, $params, $rule_types, $options_screen );
+
+		// let developers override the matches and parameters
+		// maybe_has_overrides() use case: setting up 'defaults' for a Field Group - you want the
+		// same Field Group to appear both in it's defined locations (which when defined omit it
+		// from $matches from the start) and in the options screen to act as the defaults
+		$matches = apply_filters( 'cfs_options_screens_rule_matches', $matches, $params, $rule_types, $this );
 
 		if ( $options_screen && is_array( $matches ) && ! empty( $matches ) ) {
+
 			// we need to strip out the Field Groups that are not registered with this options screen
+			$field_group_ids = $this->get_field_group_ids( $options_screen['field_groups'] );
+
 			foreach ( $matches as $match_key => $match_title ) {
-				if ( ! in_array( $match_key, $options_screen['field_groups'] ) ) {
+				if ( ! in_array( $match_key, $field_group_ids ) ) {
 					unset( $matches[ $match_key ] );
 				}
 			}
+
 		} else {
+
 			// we need to strip out all Field Groups related to Options Screens else they'll show up where we don't want them
 			$options_screens_field_groups = array();
+
 			foreach ( $this->screens as $screen_meta ) {
-				$options_screens_field_groups = array_merge( $options_screens_field_groups, $screen_meta['field_groups'] );
+				$field_group_ids = $this->get_field_group_ids( $screen_meta['field_groups'], false );
+				$options_screens_field_groups = array_merge( $options_screens_field_groups, $field_group_ids );
 			}
+
 			foreach ( $matches as $match_key => $match_title ) {
 				if ( in_array( $match_key, $options_screens_field_groups ) ) {
 					unset( $matches[ $match_key ] );

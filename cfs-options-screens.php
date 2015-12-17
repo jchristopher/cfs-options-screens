@@ -57,9 +57,93 @@ class CFS_Options_Screens {
 	private $applicable = false;
 
 	function __construct() {
-		add_action( 'init', array( $this, 'init' ) );
-		add_action( 'cfs_matching_groups', array( $this, 'cfs_rule_override' ), 10, 3 );
-		add_action( 'admin_print_scripts', array( $this, 'admin_inline_css' ) );
+		add_action( 'init',                 array( $this, 'init' ) );
+		add_action( 'admin_print_scripts',  array( $this, 'admin_inline_css' ) );
+
+		add_action( 'cfs_matching_groups',      array( $this, 'cfs_rule_override' ), 10, 3 );
+		add_action( 'cfs_form_before_fields',   array( $this, 'output_override_note' ), 10, 4 );
+	}
+
+	/**
+	 * Output some markup above all Field Group fields in override cases, explaining
+	 * that editing these fields will override the defaults
+	 *
+	 * @since 1.2
+	 *
+	 * @param $params
+	 * @param $all_group_ids
+	 * @param $input_fields
+	 * @param $cfs_form
+	 *
+	 * @return void
+	 */
+	function output_override_note( $params, $all_group_ids, $input_fields, $cfs_form ) {
+
+		if ( empty( $params['field_groups'] ) ) {
+			return;
+		}
+
+		$screens = $this->get_screens_from_field_group_id( $params['field_groups'] );
+
+		foreach ( $screens as $screen ) {
+			foreach ( $screen['field_groups'] as $field_group ) {
+				if ( array_key_exists( 'has_overrides', $field_group ) ) {
+
+					// set up the note when editing the default
+					$editing_default_note =  __( '<strong>Note:</strong> These defaults can be overridden when editing the applicable page.',
+						'cfsos' );
+					$editing_default_note = apply_filters( 'cfs_options_screens_override_note_default',
+						'<div class="cfs-options-screens-note field" style="font-size:1.2em;"><p class="notes" style="padding-top:0.85em;">' . $editing_default_note . '</p></div>',
+						$screen
+					);
+
+					// set up the note when editing the override
+					$editing_override_note = sprintf(
+						__( '<strong>Optional:</strong> Editing these fields will <em>override</em> <a href="%s">%s</a> which will be used if these fields are left empty',
+							'cfsos' ),
+						esc_url( admin_url() . $this->get_options_screen_edit_slug( $screen['id'] ) ),
+						esc_html( $screen['menu_title'] )
+					);
+					$editing_override_note = apply_filters( 'cfs_options_screens_override_note_override',
+						'<div class="cfs-options-screens-note field" style="font-size:1.2em;"><p class="notes" style="padding-top:0.85em;">' . $editing_override_note . '</p></div>',
+						$screen
+					);
+
+					$note = $this->applicable ? $editing_default_note : $editing_override_note;
+
+					echo wp_kses_post(
+						apply_filters( 'cfs_options_screens_override_note',
+							$note,
+							$screen,
+							$this->applicable // indicates whether editing the default (when true) or the override (when false)
+						)
+					);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Retrieve an array of Options Screens models that utilize a Field Group ID
+	 *
+	 * @since 1.2
+	 * @param $field_group_id
+	 *
+	 * @return array
+	 */
+	function get_screens_from_field_group_id( $field_group_id ) {
+
+		$field_group_id = absint( $field_group_id );
+		$screens = array();
+
+		foreach ( $this->screens as $screen ) {
+			$screen_field_groups = $this->get_field_group_ids( $screen['field_groups'] );
+			if ( in_array( $field_group_id, $screen_field_groups ) ) {
+				$screens[] = $screen;
+			}
+		}
+
+		return $screens;
 	}
 
 	/**
@@ -211,24 +295,67 @@ class CFS_Options_Screens {
 	}
 
 	/**
+	 * Retrieve the slug for an Options Screen edit URL
+	 *
+	 * @since 1.2
+	 *
+	 * @param $screen_id
+	 *
+	 * @return mixed
+	 */
+	function get_options_screen_edit_slug( $screen_id ) {
+		$url = add_query_arg(
+			array(
+				'post'      => absint( $screen_id ),
+				'action'    => 'edit',
+			),
+			admin_url( 'post.php' )
+		);
+
+		$url = esc_url( $url );
+
+		return str_replace( admin_url(), '', $url );
+	}
+
+	/**
 	 * Add applicable Admin menus
 	 */
 	function maybe_add_menus() {
 		// screens were registered during init so the ID is already prepped and the post exists
 		if ( ! empty( $this->screens ) ) {
 			foreach ( $this->screens as $screen ) {
-				$edit_link = 'post.php?post=' . absint( $screen['id'] ) . '&action=edit';
+				$edit_link = $this->get_options_screen_edit_slug( $screen['id'] );
 
 				// if this screen doesn't have a parent, it IS a parent
 				if ( empty( $screen['parent'] ) ) {
-					add_menu_page( $screen['page_title'], $screen['menu_title'], $screen['capability'], $edit_link, '', $screen['menu_icon'], $screen['menu_position'] );
+					add_menu_page(
+						$screen['page_title'],
+						$screen['menu_title'],
+						$screen['capability'],
+						$edit_link,
+						'',
+						$screen['menu_icon'],
+						$screen['menu_position']
+					);
 				} else {
 					// it's a sub-menu, so add it to the parent
 					$parent = (string) $screen['parent'];
+
 					foreach ( $this->screens as $maybe_parent_screen ) {
+
 						if ( $parent == $maybe_parent_screen['name'] ) {
-							$parent_slug = 'post.php?post=' . absint( $maybe_parent_screen['id'] ) . '&action=edit';
-							add_submenu_page( $parent_slug, $screen['page_title'], $screen['menu_title'], $screen['capability'], $edit_link, '' );
+
+							$parent_slug = $this->get_options_screen_edit_slug( $maybe_parent_screen['id'] );
+
+							add_submenu_page(
+								$parent_slug,
+								$screen['page_title'],
+								$screen['menu_title'],
+								$screen['capability'],
+								$edit_link,
+								''
+							);
+
 							break;
 						}
 					}

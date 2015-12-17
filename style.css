@@ -1,11 +1,11 @@
-#wpbody-content .wrap h1,
-#wpbody-content .wrap h2 {
+#wpbody-content .wrap > h1,
+#wpbody-content .wrap > h2 {
 	position:relative;
 	visibility:hidden;
 }
 
-#wpbody-content .wrap h1:after,
-#wpbody-content .wrap h2:after {
+#wpbody-content .wrap > h1:after,
+#wpbody-content .wrap > h2:after {
 	display:block;
 	position:absolute;
 	left:0;

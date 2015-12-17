@@ -135,8 +135,8 @@ class CFS_Options_Screens {
 
 		if ( $this->applicable ) { ?>
 			<style type="text/css">
-				#wpbody-content .wrap h1:after,
-				#wpbody-content .wrap h2:after {
+				#wpbody-content .wrap > h1:after,
+				#wpbody-content .wrap > h2:after {
 					content: '<?php echo esc_html( $heading ); ?>';
 				}
 			</style>

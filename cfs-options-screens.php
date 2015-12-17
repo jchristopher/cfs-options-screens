@@ -424,7 +424,13 @@ if ( ! function_exists( 'cfs_get_option' ) ) {
 		if ( ! empty( $cfs_options_screens->screens ) ) {
 			foreach ( $cfs_options_screens->screens as $screen_meta ) {
 				if ( $screen == $screen_meta['name'] ) {
-					$value = CFS()->get( $field, $screen_meta['id'] );
+
+					// support the overrides concept by first checking for the override
+					// and automatically falling back to the Options Screen value if needed
+					$value = CFS()->get( $field, get_queried_object_id() );
+					if ( empty( $value ) ) {
+						$value = CFS()->get( $field, $screen_meta['id'] );
+					}
 				}
 			}
 		}

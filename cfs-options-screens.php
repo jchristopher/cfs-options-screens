@@ -61,7 +61,7 @@ class CFS_Options_Screens {
 		add_action( 'admin_print_scripts',  array( $this, 'admin_inline_css' ) );
 
 		add_action( 'cfs_matching_groups',      array( $this, 'cfs_rule_override' ), 10, 3 );
-		add_action( 'cfs_form_before_fields',   array( $this, 'output_override_note' ), 10, 4 );
+		add_action( 'cfs_form_before_fields',   array( $this, 'output_override_note' ) );
 	}
 
 	/**
@@ -71,13 +71,10 @@ class CFS_Options_Screens {
 	 * @since 1.2
 	 *
 	 * @param $params
-	 * @param $all_group_ids
-	 * @param $input_fields
-	 * @param $cfs_form
 	 *
 	 * @return void
 	 */
-	function output_override_note( $params, $all_group_ids, $input_fields, $cfs_form ) {
+	function output_override_note( $params ) {
 
 		if ( empty( $params['field_groups'] ) ) {
 			return;
@@ -98,6 +95,7 @@ class CFS_Options_Screens {
 					);
 
 					// set up the note when editing the override
+					/** @noinspection HtmlUnknownTarget */
 					$editing_override_note = sprintf(
 						__( '<strong>Optional:</strong> Editing these fields will <em>override</em> <a href="%s">%s</a> which will be used if these fields are left empty',
 							'cfsos' ),
@@ -321,43 +319,46 @@ class CFS_Options_Screens {
 	 * Add applicable Admin menus
 	 */
 	function maybe_add_menus() {
+
+		if ( empty( $this->screens ) ) {
+			return;
+		}
+
 		// screens were registered during init so the ID is already prepped and the post exists
-		if ( ! empty( $this->screens ) ) {
-			foreach ( $this->screens as $screen ) {
-				$edit_link = $this->get_options_screen_edit_slug( $screen['id'] );
+		foreach ( $this->screens as $screen ) {
+			$edit_link = $this->get_options_screen_edit_slug( $screen['id'] );
 
-				// if this screen doesn't have a parent, it IS a parent
-				if ( empty( $screen['parent'] ) ) {
-					add_menu_page(
-						$screen['page_title'],
-						$screen['menu_title'],
-						$screen['capability'],
-						$edit_link,
-						'',
-						$screen['menu_icon'],
-						$screen['menu_position']
-					);
-				} else {
-					// it's a sub-menu, so add it to the parent
-					$parent = (string) $screen['parent'];
+			// if this screen doesn't have a parent, it IS a parent
+			if ( empty( $screen['parent'] ) ) {
+				add_menu_page(
+					$screen['page_title'],
+					$screen['menu_title'],
+					$screen['capability'],
+					$edit_link,
+					'',
+					$screen['menu_icon'],
+					$screen['menu_position']
+				);
+			} else {
+				// it's a sub-menu, so add it to the parent
+				$parent = (string) $screen['parent'];
 
-					foreach ( $this->screens as $maybe_parent_screen ) {
+				foreach ( $this->screens as $maybe_parent_screen ) {
 
-						if ( $parent == $maybe_parent_screen['name'] ) {
+					if ( $parent == $maybe_parent_screen['name'] ) {
 
-							$parent_slug = $this->get_options_screen_edit_slug( $maybe_parent_screen['id'] );
+						$parent_slug = $this->get_options_screen_edit_slug( $maybe_parent_screen['id'] );
 
-							add_submenu_page(
-								$parent_slug,
-								$screen['page_title'],
-								$screen['menu_title'],
-								$screen['capability'],
-								$edit_link,
-								''
-							);
+						add_submenu_page(
+							$parent_slug,
+							$screen['page_title'],
+							$screen['menu_title'],
+							$screen['capability'],
+							$edit_link,
+							''
+						);
 
-							break;
-						}
+						break;
 					}
 				}
 			}
@@ -373,23 +374,27 @@ class CFS_Options_Screens {
 	 * @param $matches
 	 * @param $params
 	 * @param $rule_types
+	 * @param $options_screen
+	 *
+	 * @return
 	 */
-	function maybe_has_overrides( $matches, $params, $rule_types, $options_screen ) {
+	function maybe_has_overrides( $matches, /** @noinspection PhpUnusedParameterInspection */ $params, /** @noinspection PhpUnusedParameterInspection */ $rule_types, $options_screen ) {
 		// didn't find an options screen?
 		if ( empty( $options_screen ) ) {
 			return $matches;
 		}
 
 		// segment defaults
-		if ( ! empty( $options_screen['field_groups'] ) ) {
+		if ( empty( $options_screen['field_groups'] ) ) {
+			return $matches;
+		}
 
-			// move over all of these Field Groups into $matches
-			foreach ( $options_screen['field_groups'] as $field_group ) {
-				$key = $this->get_field_group_id( $field_group );
+		// move over all of these Field Groups into $matches
+		foreach ( $options_screen['field_groups'] as $field_group ) {
+			$key = $this->get_field_group_id( $field_group );
 
-				if ( ! array_key_exists( $key, $matches ) ) {
-					$matches[ $key ] = get_the_title( $key );
-				}
+			if ( ! array_key_exists( $key, $matches ) ) {
+				$matches[ $key ] = get_the_title( $key );
 			}
 		}
 

@@ -544,7 +544,7 @@ class CFS_Options_Screens {
  * @return bool|mixed The field value as returned by the CFS API
  */
 if ( ! function_exists( 'cfs_get_option' ) ) {
-	function cfs_get_option( $screen = 'options', $field = '' ) {
+	function cfs_get_option( $screen = 'options', $field = '', $post_id ) {
 		$value = false;
 
 		if ( ! function_exists( 'CFS' ) ) {
@@ -559,7 +559,10 @@ if ( ! function_exists( 'cfs_get_option' ) ) {
 
 					// support the overrides concept by first checking for the override
 					// and automatically falling back to the Options Screen value if needed
-					$value = CFS()->get( $field, get_queried_object_id() );
+					if ( empty( $post_id ) ) {
+						$post_id = get_queried_object_id();
+					}
+					$value = CFS()->get( $field, absint( $post_id ) );
 					if ( empty( $value ) ) {
 						$value = CFS()->get( $field, $screen_meta['id'] );
 					}

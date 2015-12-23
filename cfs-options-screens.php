@@ -84,7 +84,7 @@ class CFS_Options_Screens {
 
 		foreach ( $screens as $screen ) {
 			foreach ( $screen['field_groups'] as $field_group ) {
-				if ( array_key_exists( 'has_overrides', $field_group ) ) {
+				if ( is_array( $field_group ) && array_key_exists( 'has_overrides', $field_group ) ) {
 
 					// set up the note when editing the default
 					$editing_default_note =  __( '<strong>Note:</strong> These defaults can be overridden when editing the applicable page.',

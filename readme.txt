@@ -4,7 +4,7 @@ Donate link: http://mondaybynoon.com/donate/
 Tags: CFS, Custom Field Suite, Options, Settings, Screen
 Requires at least: 3.9
 Tested up to: 4.4
-Stable tag: 1.1.2
+Stable tag: 1.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -29,20 +29,23 @@ Begin by creating Field Group(s) you want to include on your options screen. **B
 	);
 	return $screens;
 }
+
 add_filter( 'cfs_options_screens', 'my_cfs_options_screens' );`
 
-Retrieve your options like so:
+= Retrieve your options like so: =
 
 `$value = cfs_get_option( 'options_screen_name', 'field_name_from_field_group' );`
 
 You can set up multiple top level and/or children options pages by adding a `parent` argument when registering your screen:
 
 `function my_cfs_options_screens( $screens ) {
+
  	// Parent
  	$screens[] = array(
  		'name' => 'options',
  		'field_groups' => array( 15 ),
  	);
+
  	// Child
  	$screens[] = array(
  		'name' => 'options-nav',
@@ -51,7 +54,31 @@ You can set up multiple top level and/or children options pages by adding a `par
  	);
  	return $screens;
  }
+
  add_filter( 'cfs_options_screens', 'my_cfs_options_screens' );`
+
+ You can also use CFS Options Screens to set up Field Group 'defaults', allowing a Field Group to appear both on a CFS Options Screen and a post edit screen. The CFS Options Screen will act as the default/fallback and the post edit screen will override those defaults.
+
+ `function my_cfs_options_screens( $screens ) {
+	$screens[] = array(
+		'name'            => 'options',
+		'menu_title'      => __( 'Site Options' ),
+		'page_title'      => __( 'Customize Site Options' ),
+		'menu_position'   => 100,
+		'icon'            => 'dashicons-admin-generic', // optional, dashicons-admin-generic is the default
+		'field_groups'      => array(
+				array(
+					'id'            => 1548,
+					'has_overrides' => true,
+				),
+			),
+	);
+	return $screens;
+}
+
+add_filter( 'cfs_options_screens', 'my_cfs_options_screens' );`
+
+Check out the `cfs_options_screens_override_note_default` and `cfs_options_screens_override_note_override` filters to customize the messaging for CFS Options Screens overrides.
 
 == Installation ==
 
@@ -70,6 +97,9 @@ You must specify the Field Group ID(s) in the `field_groups` parameter when usin
 `$value = cfs_get_option( 'options_screen_name', 'field_name_from_field_group' );`
 
 == Changelog ==
+
+= 1.2 =
+* Added support for Field Group defaults/overrides where a Field Group can appear both on a CFS Options Screen and a post edit screen, and 'fall back' to the CFS Options Screen where applicable
 
 = 1.1.2 =
 * Refined the arguments for the underlying CPT to hide it from the Admin menu, filterable with `cfs_options_screens_post_type_args`

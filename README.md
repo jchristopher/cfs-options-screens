@@ -20,8 +20,10 @@ function my_cfs_options_screens( $screens ) {
 		'icon'            => 'dashicons-admin-generic', // optional, dashicons-admin-generic is the default
 		'field_groups'    => array( 75 ), // post ID(s) of CFS Field Group to use on this page
 	);
+
 	return $screens;
 }
+
 add_filter( 'cfs_options_screens', 'my_cfs_options_screens' );
 ```
 
@@ -29,11 +31,13 @@ or register multiple Options Screens
 
 ```php
 function my_cfs_options_screens( $screens ) {
+
 	// Parent
 	$screens[] = array(
 		'name' => 'options',
 		'field_groups' => array( 15 ),
 	);
+
 	// Child
 	$screens[] = array(
 		'name' => 'options-nav',
@@ -42,10 +46,34 @@ function my_cfs_options_screens( $screens ) {
 	);
 	return $screens;
 }
+
 add_filter( 'cfs_options_screens', 'my_cfs_options_screens' );
 ```
 
 Once your options screen(s) have been registered you can attach CFS Field Groups to them. Done!
+
+You can also use CFS Options Screens to set up Field Group 'defaults', allowing a Field Group to appear both on a CFS Options Screen and a post edit screen. The CFS Options Screen will act as the default/fallback and the post edit screen will override those defaults.
+
+ `function my_cfs_options_screens( $screens ) {
+	$screens[] = array(
+		'name'            => 'options',
+		'menu_title'      => __( 'Site Options' ),
+		'page_title'      => __( 'Customize Site Options' ),
+		'menu_position'   => 100,
+		'icon'            => 'dashicons-admin-generic', // optional, dashicons-admin-generic is the default
+		'field_groups'      => array(
+				array(
+					'id'            => 1548,
+					'has_overrides' => true,
+				),
+			),
+	);
+	return $screens;
+}
+
+add_filter( 'cfs_options_screens', 'my_cfs_options_screens' );`
+
+Check out the `cfs_options_screens_override_note_default` and `cfs_options_screens_override_note_override` filters to customize the messaging for CFS Options Screens overrides.
 
 ## Retrieve options
 

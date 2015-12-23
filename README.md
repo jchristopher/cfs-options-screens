@@ -54,7 +54,8 @@ Once your options screen(s) have been registered you can attach CFS Field Groups
 
 You can also use CFS Options Screens to set up Field Group 'defaults', allowing a Field Group to appear both on a CFS Options Screen and a post edit screen. The CFS Options Screen will act as the default/fallback and the post edit screen will override those defaults.
 
- `function my_cfs_options_screens( $screens ) {
+ ```php
+ function my_cfs_options_screens( $screens ) {
 	$screens[] = array(
 		'name'            => 'options',
 		'menu_title'      => __( 'Site Options' ),
@@ -71,7 +72,8 @@ You can also use CFS Options Screens to set up Field Group 'defaults', allowing 
 	return $screens;
 }
 
-add_filter( 'cfs_options_screens', 'my_cfs_options_screens' );`
+add_filter( 'cfs_options_screens', 'my_cfs_options_screens' );
+```
 
 Check out the `cfs_options_screens_override_note_default` and `cfs_options_screens_override_note_override` filters to customize the messaging for CFS Options Screens overrides.
 

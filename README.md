@@ -6,7 +6,7 @@ Create any number of options screens powered by [Custom Field Suite](http://cust
 
 ## Documentation
 
-Begin by creating your Field Group(s) as you normally would. Be sure to set **NO Placement Rules**, this is handled automagically.
+Begin by creating your Field Group(s) as you normally would. *Unless setting up an [override](#overrides)*, be sure to set **NO Placement Rules**, this is handled automagically.
 
 Register an Options Screen (with all options)
 
@@ -52,7 +52,9 @@ add_filter( 'cfs_options_screens', 'my_cfs_options_screens' );
 
 Once your options screen(s) have been registered you can attach CFS Field Groups to them. Done!
 
-You can also use CFS Options Screens to set up Field Group 'defaults', allowing a Field Group to appear both on a CFS Options Screen and a post edit screen. The CFS Options Screen will act as the default/fallback and the post edit screen will override those defaults.
+### Overrides
+
+You can also use CFS Options Screens to set up Field Group overrides, allowing a Field Group to appear both on a CFS Options Screen and a post edit screen. The CFS Options Screen will act as the default/fallback and the post edit screen will override those defaults.
 
  ```php
  function my_cfs_options_screens( $screens ) {

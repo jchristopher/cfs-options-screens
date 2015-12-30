@@ -4,7 +4,7 @@ Donate link: http://mondaybynoon.com/donate/
 Tags: CFS, Custom Field Suite, Options, Settings, Screen
 Requires at least: 3.9
 Tested up to: 4.4
-Stable tag: 1.2
+Stable tag: 1.2.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -97,6 +97,9 @@ You must specify the Field Group ID(s) in the `field_groups` parameter when usin
 `$value = cfs_get_option( 'options_screen_name', 'field_name_from_field_group' );`
 
 == Changelog ==
+
+= 1.2.1 =
+* PHP Warning cleanup for `cfs_get_option`
 
 = 1.2 =
 * Added support for Field Group defaults/overrides where a Field Group can appear both on a CFS Options Screen and a post edit screen, and 'fall back' to the CFS Options Screen where applicable

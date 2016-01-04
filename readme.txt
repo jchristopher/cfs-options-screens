@@ -98,6 +98,9 @@ You must specify the Field Group ID(s) in the `field_groups` parameter when usin
 
 == Changelog ==
 
+= 1.2.2 =
+* Fixed an issue where multiple override notes would be output when there were multiple override Field Groups
+
 = 1.2.1 =
 * PHP Warning cleanup for `cfs_get_option`
 

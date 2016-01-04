@@ -3,7 +3,7 @@
 Plugin Name: CFS Options Screens
 Plugin URI: http://wordpress.org/plugins/cfs-options-screens/
 Description: Register options screens powered by Custom Field Suite
-Version: 1.2.1
+Version: 1.2.2
 Author: Jonathan Christopher
 Author URI: http://mondaybynoon.com/
 Text Domain: cfsos
@@ -116,6 +116,8 @@ class CFS_Options_Screens {
 							$this->applicable // indicates whether editing the default (when true) or the override (when false)
 						)
 					);
+
+					break;
 				}
 			}
 		}

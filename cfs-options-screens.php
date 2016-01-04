@@ -3,7 +3,7 @@
 Plugin Name: CFS Options Screens
 Plugin URI: http://wordpress.org/plugins/cfs-options-screens/
 Description: Register options screens powered by Custom Field Suite
-Version: 1.2.2
+Version: 1.2.3
 Author: Jonathan Christopher
 Author URI: http://mondaybynoon.com/
 Text Domain: cfsos
@@ -84,7 +84,12 @@ class CFS_Options_Screens {
 
 		foreach ( $screens as $screen ) {
 			foreach ( $screen['field_groups'] as $field_group ) {
-				if ( is_array( $field_group ) && array_key_exists( 'has_overrides', $field_group ) ) {
+				if (
+					is_array( $field_group )
+					&& array_key_exists( 'id', $field_group )
+					&& $params['field_groups'] == $field_group['id']
+					&& array_key_exists( 'has_overrides', $field_group )
+					&& ! empty( $field_group['has_overrides'] ) ) {
 
 					// set up the note when editing the default
 					$editing_default_note =  __( '<strong>Note:</strong> These defaults can be overridden when editing the applicable page.',

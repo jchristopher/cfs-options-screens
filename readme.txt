@@ -4,7 +4,7 @@ Donate link: http://mondaybynoon.com/donate/
 Tags: CFS, Custom Field Suite, Options, Settings, Screen
 Requires at least: 3.9
 Tested up to: 4.4
-Stable tag: 1.2.1
+Stable tag: 1.2.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -98,7 +98,8 @@ You must specify the Field Group ID(s) in the `field_groups` parameter when usin
 
 == Changelog ==
 
-= 1.2.2 =
+= 1.2.3 =
+* Fixed an issue that would output override note if any Field Group on an Options Screen had one
 * Fixed an issue where multiple override notes would be output when there were multiple override Field Groups
 
 = 1.2.1 =

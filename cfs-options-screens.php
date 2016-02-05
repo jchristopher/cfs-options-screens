@@ -238,6 +238,13 @@ class CFS_Options_Screens {
 	function maybe_updated_notice() {
 		global $post;
 
+		$screen = get_current_screen();
+
+		// bail out if this isn't a proper edit screen
+		if ( ! isset( $screen->post_type ) || $this->post_type !== $screen->post_type ) {
+			return;
+		}
+
 		if ( isset( $_GET['message'] ) && $this->post_type == $post->post_type ) {
 			?>
 				<div class="updated"><p><?php esc_html_e( 'Saved', 'cfsos' ); ?></p></div>

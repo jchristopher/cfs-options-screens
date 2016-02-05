@@ -3,12 +3,12 @@
 Plugin Name: CFS Options Screens
 Plugin URI: http://wordpress.org/plugins/cfs-options-screens/
 Description: Register options screens powered by Custom Field Suite
-Version: 1.2.3
+Version: 1.2.4
 Author: Jonathan Christopher
 Author URI: http://mondaybynoon.com/
 Text Domain: cfsos
 
-Copyright 2014-2015 Jonathan Christopher
+Copyright 2014-2016 Jonathan Christopher
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License

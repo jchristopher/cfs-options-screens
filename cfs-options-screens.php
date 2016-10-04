@@ -265,7 +265,7 @@ class CFS_Options_Screens {
 				$this->screens[ $screen_key ]['menu_position']  = isset( $screen_meta['menu_position'] ) ? $screen_meta['menu_position'] : 100;
 				$this->screens[ $screen_key ]['field_groups']   = isset( $screen_meta['field_groups'] )  ? $screen_meta['field_groups'] : array();
 
-				$this->screens[ $screen_key ]['capability']     = apply_filters( 'cfs_options_screens_capability', 'manage_options', $screen_meta );
+				$this->screens[ $screen_key ]['capability']     = isset( $screen_meta['capability'] )  ? $screen_meta['capability'] : apply_filters( 'cfs_options_screens_capability', 'manage_options', $screen_meta );
 
 				// check to see if the post for this screen exists
 				$screen = get_page_by_title( $this->screens[ $screen_key ]['name'], 'OBJECT', $this->post_type );

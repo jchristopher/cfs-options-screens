@@ -18,7 +18,7 @@ function my_cfs_options_screens( $screens ) {
 		'page_title'      => __( 'Customize Site Options' ),
 		'menu_position'   => 100,
 		'icon'            => 'dashicons-admin-generic', // optional, dashicons-admin-generic is the default
-		'field_groups'    => array( 75 ), // post ID(s) of CFS Field Group to use on this page
+		'field_groups'    => array( 'My Field Group' ), // Field Group name(s) of CFS Field Group to use on this page (can also be post IDs)
 	);
 
 	return $screens;
@@ -32,19 +32,20 @@ or register multiple Options Screens
 ```php
 function my_cfs_options_screens( $screens ) {
 
-	// Parent
-	$screens[] = array(
-		'name' => 'options',
-		'field_groups' => array( 15 ),
-	);
+    // Parent
+    $screens[] = array(
+        'name'         => 'options',
+        'field_groups' => array( 'My Parent Field Group Name' ),
+    );
 
-	// Child
-	$screens[] = array(
-		'name' => 'options-nav',
-		'parent' => 'options',
-		'field_groups' => array( 17 ),
-	);
-	return $screens;
+    // Child
+    $screens[] = array(
+        'name'         => 'options-nav',
+        'parent'       => 'options', // name of the parent
+        'field_groups' => array( 'My Child Field Group Name' ),
+    );
+
+    return $screens;
 }
 
 add_filter( 'cfs_options_screens', 'my_cfs_options_screens' );
@@ -65,12 +66,13 @@ You can also use CFS Options Screens to set up Field Group overrides, allowing a
 		'menu_position'   => 100,
 		'icon'            => 'dashicons-admin-generic', // optional, dashicons-admin-generic is the default
 		'field_groups'      => array(
-				array(
-					'id'            => 1548,
-					'has_overrides' => true,
+                array(
+                    'title'         => 'My CFS Field Group Name',
+                    'has_overrides' => true,
 				),
 			),
 	);
+
 	return $screens;
 }
 

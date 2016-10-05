@@ -429,10 +429,37 @@ class CFS_Options_Screens {
 	function get_field_group_id( $field_group ) {
 
 		if ( is_array( $field_group ) && array_key_exists( 'id', $field_group ) ) {
-			$field_group = absint( $field_group['id'] );
+			$field_group = $field_group['id'];
+		}
+
+		if ( is_array( $field_group ) && array_key_exists( 'title', $field_group ) ) {
+			$field_group = $this->get_field_group_id_from_title( $field_group['title'] );
+		}
+
+		if ( is_string( $field_group ) ) {
+			$field_group = $this->get_field_group_id_from_title( $field_group );
 		}
 
 		return absint( $field_group );
+	}
+
+	/**
+	 * Retrieve CFS Field Group ID from title
+	 *
+	 * @param string $title
+	 *
+	 * @return int
+	 */
+	function get_field_group_id_from_title( $title = '' ) {
+		$id = 0;
+
+		$field_group_obj = get_page_by_title( $title, 'OBJECT', 'cfs' );
+
+		if ( $field_group_obj instanceof WP_Post ) {
+			$id = $field_group_obj->ID;
+		}
+
+		return $id;
 	}
 
 	/**

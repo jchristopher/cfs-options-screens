@@ -142,7 +142,9 @@ class CFS_Options_Screens {
 		$screens = array();
 
 		foreach ( $this->screens as $screen ) {
+
 			$screen_field_groups = $this->get_field_group_ids( $screen['field_groups'] );
+
 			if ( in_array( $field_group_id, $screen_field_groups ) ) {
 				$screens[] = $screen;
 			}
@@ -247,7 +249,7 @@ class CFS_Options_Screens {
 
 		if ( isset( $_GET['message'] ) && $this->post_type == $post->post_type ) {
 			?>
-				<div class="updated"><p><?php esc_html_e( 'Saved', 'cfsos' ); ?></p></div>
+			<div class="updated"><p><?php esc_html_e( 'Saved', 'cfsos' ); ?></p></div>
 			<?php
 		}
 	}

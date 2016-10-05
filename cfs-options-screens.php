@@ -428,16 +428,22 @@ class CFS_Options_Screens {
 	 */
 	function get_field_group_id( $field_group ) {
 
-		if ( is_array( $field_group ) && array_key_exists( 'id', $field_group ) ) {
-			$field_group = $field_group['id'];
-		}
-
-		if ( is_array( $field_group ) && array_key_exists( 'title', $field_group ) ) {
-			$field_group = $this->get_field_group_id_from_title( $field_group['title'] );
-		}
-
 		if ( is_string( $field_group ) ) {
+
 			$field_group = $this->get_field_group_id_from_title( $field_group );
+
+		} elseif ( is_array( $field_group ) ) {
+
+			if ( array_key_exists( 'id', $field_group ) ) {
+
+				$field_group = $field_group['id'];
+
+			} elseif ( array_key_exists( 'title', $field_group ) ) {
+
+				$field_group = $this->get_field_group_id_from_title( $field_group['title'] );
+
+			}
+
 		}
 
 		return absint( $field_group );

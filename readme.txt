@@ -4,7 +4,7 @@ Donate link: http://mondaybynoon.com/donate/
 Tags: CFS, Custom Field Suite, Options, Settings, Screen
 Requires at least: 3.9
 Tested up to: 4.6.1
-Stable tag: 1.2.6
+Stable tag: 1.2.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -101,7 +101,7 @@ You must specify the Field Group Title(s) in the `field_groups` parameter when u
 
 == Changelog ==
 
-= 1.2.6 =
+= 1.2.7 =
 * Add support for using CFS Field Group title instead of ID
 
 = 1.2.5 =

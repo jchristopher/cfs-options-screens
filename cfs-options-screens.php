@@ -358,25 +358,28 @@ class CFS_Options_Screens {
 			} else {
 				// it's a sub-menu, so add it to the parent
 				$parent = (string) $screen['parent'];
+				$parent_slug = '';
 
 				foreach ( $this->screens as $maybe_parent_screen ) {
 
 					if ( $parent == $maybe_parent_screen['name'] ) {
-
 						$parent_slug = $this->get_options_screen_edit_slug( $maybe_parent_screen['id'] );
-
-						add_submenu_page(
-							$parent_slug,
-							$screen['page_title'],
-							$screen['menu_title'],
-							$screen['capability'],
-							$edit_link,
-							''
-						);
-
 						break;
 					}
 				}
+
+				if ( empty( $parent_slug ) ) {
+					$parent_slug = $parent;
+				}
+
+				add_submenu_page(
+					$parent_slug,
+					$screen['page_title'],
+					$screen['menu_title'],
+					$screen['capability'],
+					$edit_link,
+					''
+				);
 			}
 		}
 	}
